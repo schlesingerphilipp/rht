@@ -25,18 +25,32 @@ vector< Line > ConvergentMapper::lines(vector< Point > points)
     if (y1 -y2 == 0)
     {
       theta = 90;
+      p = x1;
+    }
+    else if(x1-x2 == 0)
+    {
+      theta = 0;
+      p = y1;
     }
     else
     {
-      theta = atan((abs(x1-x2)/abs(y1 - y2))) * radToDeg;
-    }
-    if (x1 - x2 == 0)
-    {
-      p = x1; //vertical line going through y1 and y2
-    }
-    else
-    {
-       p = abs(0.5 * (((x2 - x1) * (y1 + y2) - (y2 - y1) * (x1 + x2)) / sqrt((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1))));
+      float x1x2 = x1-x2;
+      float y1y2 = y1-y2;
+      float x1x2y1y2 = x1x2/y1y2;
+      float aTan = atan(x1x2y1y2);
+      theta = abs(aTan) * radToDeg;
+      float m = y1y2 / x1x2;
+      float intercept = y1 + x1 * m;
+      if (intercept > 0 && m > 0)
+      {
+	theta += 90;
+      }
+      else if(intercept < 0 && m > 0)
+      {
+	theta += 270;
+      }
+    
+       p = 0.5 * abs(((x2 - x1) * (y1 + y2) - (y2 - y1) * (x1 + x2)) / sqrt((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1)));
     }
     /*if (p == 0) 
     {

@@ -1,6 +1,7 @@
 #include "Accumulator.h"
 #include <math.h>       
 #include "Accumulate.cpp"
+#include <vector>
 
 using namespace std;
 typedef tuple<int,int,float> Circle;
@@ -36,14 +37,18 @@ vector< Line > Accumulator::candidateLines(vector< Line > lines)
   }
   //Only return candidate Lines (more than 2 or 3 occurances)
   vector< Line > canditates = {};
+  sort(accumulator.begin(),accumulator.end(),sortCandidates);
   for (Accumulate &accumulate : accumulator)
   {
-     if (accumulate.votes > 5)
+     if (accumulate.votes > 0)
      {
        canditates.push_back(accumulate.line);
      }
+     else
+     {
+       break;
+     }
   }
-  sort(canditates.begin(),canditates.end(),sortCandidates);
   return canditates;
 }
 

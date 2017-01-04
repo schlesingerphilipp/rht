@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION 2.8.11)
-project (imgprocess)
+project (rht)
 add_definitions(-std=c++11)
 
 # Find the FFTW lib

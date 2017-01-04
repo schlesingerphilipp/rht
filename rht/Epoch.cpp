@@ -34,7 +34,7 @@ vector<Line> Epoch::lines(ImagePart imagePart)
       {
 	  /*tuple<vector<Point>,vector<LinePart>, int> mapping = mapPointsToLine(line, imagePart);
 	  vector<LinePart>parts(get<1>(mapping));
-	  if (get<2>(mapping)>3)
+	  if (get<2>(mapping)>30)
 	  {
 	    imagePart.removePoints(get<0>(mapping));
 	    trueLine = true;
@@ -43,12 +43,13 @@ vector<Line> Epoch::lines(ImagePart imagePart)
 	  vector<Point> pointsToRemove({});
 	  for(Point &p : imagePart.allPoints())
 	  {
-	    if(linePointDistance(line, p) < 3)
+	    if(linePointDistance(line, p) < 5)
 	    {
 	      pointsToRemove.push_back(p);
 	    }
 	  }
-	  if (pointsToRemove.size() > 20)
+	  
+	  if (pointsToRemove.size() > 70)
 	  {
 	    imagePart.removePoints(pointsToRemove);
 	    lines.push_back(line);
@@ -104,6 +105,17 @@ tuple< vector< Point >,vector<LinePart>, int > Epoch::mapPointsToLine(Line line,
       }
       end = End(x,y);
       potentialRemove.push_back(Point(x,y));
+      for (int xt = -2; xt < 3; xt++)
+      {
+	for(int yt = -2; yt < 3; yt++)
+	{
+	  if(imagePart.isNotZeroAt(x+xt,y+yt))
+	  {
+	    potentialRemove.push_back(Point(x+xt,y+yt));
+	    tollerance = tollerance == maximum ? maximum : tollerance + 1;
+	  }
+	}
+      }
     }
     else if (tollerance == 0)
     {
@@ -124,7 +136,6 @@ tuple< vector< Point >,vector<LinePart>, int > Epoch::mapPointsToLine(Line line,
   }
   return tuple< vector< Point >,vector<LinePart>, int > (pointsToRemove, parts, allLength);
 }
-
 int Epoch::linePointDistance(Line line, Point point)
 {
   /*
@@ -149,12 +160,16 @@ int Epoch::linePointDistance(Line line, Point point)
   {
     return abs(y - p);
   }
-  int yLine = round((p - x * cos(theta)) / sin(theta));
-  int xLine = round((p - y * sin(theta)) / cos(theta));
+  const float  degToRad  = 3.14159265 / 180;
+  double radT = theta*degToRad;
+  double cosT = std::cos(radT);
+  double sinT = std::sin(radT);
+  int yLine = round((p - x * cosT) / sinT);
+  int xLine = round((p - y * sinT) / cosT);
   float a = abs(yLine - y);
   float b = abs(xLine - x);
   float c = sqrt((a*a)+(b*b));
   //a*b*0.5 = 0.5 * c * height
-  int height = ((a * b) * 0.5) / (0.5*c);
+  int height = a * b / c;
   return abs(height);
 }

@@ -4,6 +4,7 @@
 #include <vigra/edgedetection.hxx>
 #include "rht/Rht.cpp"
 #include "rht/Transformation.h"
+#include "math.h"
 
 
 using namespace vigra;
@@ -11,16 +12,17 @@ typedef MultiArray<2, int > BinaryArray;
 typedef std::tuple<float,float> Line;
 
 int main(int argc, char **argv) {
-    std::cout << "Hello, world!" << std::endl;
-    ImageImportInfo imageInfo("../images/5.png");  
+    ImageImportInfo imageInfo("../images/2.png");  
     MultiArray<2, float > imageArray(imageInfo.shape());  
     importImage(imageInfo, imageArray);
     BinaryArray edgeArray(imageInfo.shape());
     cannyEdgeImage(imageArray, edgeArray, 0.8, 4.0, 1);
-    exportImage(edgeArray, "./../images/3out.png");
     Transformation t = Rht::transform(edgeArray);
     std::cout << "Lines: ";
     std::cout <<  t.lines.size()<< endl;;
+    const float  degToRad  = 3.14159265 / 180;
+        exportImage(edgeArray, "./../images/edge.png");
+    //edgeArray = 0;
     for (Line l : t.lines)
     {
       float theta = std::get<0>(l);
@@ -36,11 +38,22 @@ int main(int argc, char **argv) {
 	  edgeArray[Shape2(x,y)] = 1;
 	}
       }
+      else if (theta == 90)
+      {
+	int y = std::round(p);
+	for (int x = 0; x < edgeArray.width(); x ++)
+	{
+	  edgeArray[Shape2(x,y)] = 1;
+	}
+      }
       else
-      {    
+      {
+	float radT = theta*degToRad;
+	float cosT = cos(radT);
+	float sinT = sin(radT);
 	for (int x = 0; x < edgeArray.width(); x++)
 	{   
-	  int y = std::round((p - (x * cos(theta))) / sin(theta));
+	  int y = std::round((p - (x * cosT)) / sinT);
 	  if (y < edgeArray.height() && y > 0)
 	  {
 	    edgeArray[Shape2(x,edgeArray.height() -y)] = 1;

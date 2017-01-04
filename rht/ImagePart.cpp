@@ -3,8 +3,11 @@
 #include <iostream>
 #include <algorithm>    // std::random_shuffle
 #include <vector>       // std::vector
-#include <cstdlib>  
+#include <cstdlib> 
+#include <ctime>        // std::time
 #include <random>
+#include <vigra/multi_array.hxx>
+#include <vigra/impex.hxx>
 
 using namespace std;
 typedef vigra::MultiArray<2, int > BinaryArray;
@@ -21,6 +24,7 @@ typedef tuple<float,float> Line;
  vector<Point> ImagePart::selectRandomPoints()
  {
    vector<tuple<int,int>> points = allPoints();
+   srand(time(0));
    random_shuffle( points.begin(), points.end());
    return points;
  }
@@ -53,8 +57,12 @@ Point ImagePart::next()
     }
     else
     {
+      const float  degToRad  = 3.14159265 / 180;
+      float radT = iterTheta*degToRad;
+      float cosT = cos(radT);
+      float sinT = sin(radT);
       iterX += 1;
-      iterY = std::round((iterP - (iterX * cos(iterTheta))) / sin(iterTheta));
+      iterY = std::round((iterP - (iterX * cosT)) / sinT);
     }
     iterHasNext = iterX < image.width() && iterY < image.height();  
     return Point(iterX, iterY);
@@ -91,13 +99,17 @@ bool ImagePart::isNotZeroAt(int x, int y)
 
 void ImagePart::removePoints(vector< Point > &points)
 {
-  int pointSize = points.size();
+  int imgH = image.height();
+  int imgW = image.width();
   for (Point &p : points)
   {
     int x = get<0>(p) - get<0>(origin);
-    int y = image.height() - get<1>(p)  - get<0>(origin);
+    int y = image.height() - get<1>(p) - get<1>(origin);
     image[vigra::Shape2(x,y)] = 0;
   }
+    int all = allPoints().size();
+  std::string name = "./../images/edge/" + std::to_string (all) + ".png";
+  vigra::exportImage(image, name);
 }
 
 
