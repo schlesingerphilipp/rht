@@ -12,7 +12,7 @@ typedef MultiArray<2, int > BinaryArray;
 typedef std::tuple<float,float> Line;
 
 int main(int argc, char **argv) {
-    ImageImportInfo imageInfo("../images/2.png");  
+    ImageImportInfo imageInfo("../images/synt6.png");  
     MultiArray<2, float > imageArray(imageInfo.shape());  
     importImage(imageInfo, imageArray);
     BinaryArray edgeArray(imageInfo.shape());
@@ -21,7 +21,7 @@ int main(int argc, char **argv) {
     std::cout << "Lines: ";
     std::cout <<  t.lines.size()<< endl;;
     const float  degToRad  = 3.14159265 / 180;
-        exportImage(edgeArray, "./../images/edge.png");
+       // exportImage(edgeArray, "./../images/edge.png");
     //edgeArray = 0;
     for (Line l : t.lines)
     {
@@ -41,9 +41,10 @@ int main(int argc, char **argv) {
       else if (theta == 90)
       {
 	int y = std::round(p);
+	int imgY = edgeArray.height() - y; 
 	for (int x = 0; x < edgeArray.width(); x ++)
 	{
-	  edgeArray[Shape2(x,y)] = 1;
+	  edgeArray[Shape2(x,imgY)] = 1;
 	}
       }
       else
@@ -54,9 +55,10 @@ int main(int argc, char **argv) {
 	for (int x = 0; x < edgeArray.width(); x++)
 	{   
 	  int y = std::round((p - (x * cosT)) / sinT);
-	  if (y < edgeArray.height() && y > 0)
+	  int imgY = edgeArray.height() - y;
+	  if (imgY < edgeArray.height() && imgY > 0)
 	  {
-	    edgeArray[Shape2(x,edgeArray.height() -y)] = 1;
+	    edgeArray[Shape2(x,imgY)] = 1;
 	  }
 	}
       }

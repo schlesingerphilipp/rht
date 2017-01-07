@@ -26,22 +26,23 @@ Transformation Rht::transform(BinaryArray img)
   {
     x = x + xStep > img.width() ? img.width() : x + xStep;
     int y =0;
-    int origY = 0;
+    int origY = 0;  
     while (y < img.height())
     {
       y = y + yStep > img.height() ? img.height() : y + yStep;
       vigra::Shape2 topLeft(origX,origY);
       vigra::Shape2 bottomRight(x,y);
+      int origP = img.height() - (origY + yStep); //Distance to origin of polar system to vigra origin
       tuple<int,int> orig(origX, origY);
       BinaryArray subImg(img.subarray(topLeft, bottomRight));
-      ImagePart imagePart(orig,subImg);
-      origX = x;
+      ImagePart imagePart(orig,subImg, origP);
       origY = y;
       auto fLines = async(launch::async,*Epoch::lines, imagePart);
       auto fCircles = async(launch::async,*Epoch::circles, imagePart);
       futureLines.push_back(move(fLines));
       futureCircles.push_back(move(fCircles));
     }
+    origX = x;
   }
   return summitUp(futureLines,futureCircles);
 }

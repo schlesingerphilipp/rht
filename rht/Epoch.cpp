@@ -43,13 +43,13 @@ vector<Line> Epoch::lines(ImagePart imagePart)
 	  vector<Point> pointsToRemove({});
 	  for(Point &p : imagePart.allPoints())
 	  {
-	    if(linePointDistance(line, p) < 5)
+	    if(linePointDistance(line, p) < 3)
 	    {
 	      pointsToRemove.push_back(p);
 	    }
 	  }
 	  
-	  if (pointsToRemove.size() > 70)
+	  if (pointsToRemove.size() > 50)
 	  {
 	    imagePart.removePoints(pointsToRemove);
 	    lines.push_back(line);

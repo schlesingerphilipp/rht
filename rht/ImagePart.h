@@ -13,6 +13,7 @@ class ImagePart {
 
   private:
     Point origin;
+    int polarYOrigin;
     int myrandom (int i);
     BinaryArray image;
     bool iteratorReady = false;
@@ -21,9 +22,10 @@ class ImagePart {
     int iterY;
     int iterX;
     bool iterHasNext;
+    Point topRight;
 
   public:
-    ImagePart(Point &orig, BinaryArray &subimage): origin(orig), image(subimage){};
+    ImagePart(Point &orig, BinaryArray &subimage, int polarY): origin(orig), image(subimage), polarYOrigin(polarY){};
     vector<Point> selectRandomPoints();
     vector<Point> allPoints();
     void removePoints(vector<Point> &points);
