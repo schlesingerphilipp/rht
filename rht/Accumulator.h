@@ -11,7 +11,7 @@ class Accumulator {
     static bool compareLines(Line one, Line two);
     static bool compareCircles(Circle one, Circle two);
   public:
-    static vector<Line> candidateLines(vector<Line> lines);
+    static vector<Line> candidateLines(vector<Line> lines, float tolleranceTheta, float tolleranceP);
     static vector<Circle> circles(vector<Circle> circles);
   };
 #endif 

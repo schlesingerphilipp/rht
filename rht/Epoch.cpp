@@ -16,7 +16,7 @@ typedef tuple<int,int> End;
 typedef vigra::MultiArray<2, int > BinaryArray;
 
 
-vector<Line> Epoch::lines(ImagePart imagePart)
+vector<Line> Epoch::lines(ImagePart imagePart, int distanceThreshold, int pointsThreshold , float tolleranceTheta, float tolleranceP)
 {
   vector<Line> lines;
   while (true)
@@ -29,7 +29,7 @@ vector<Line> Epoch::lines(ImagePart imagePart)
     auto start = std::chrono::high_resolution_clock::now();
     
     vector<Line> convergedLines = ConvergentMapper::lines(points);
-    vector< Line > candidateLines = Accumulator::candidateLines(convergedLines);
+    vector< Line > candidateLines = Accumulator::candidateLines(convergedLines, tolleranceTheta, tolleranceP);
     if (candidateLines.size() > 0)
     {
       auto end = std::chrono::high_resolution_clock::now();
@@ -50,13 +50,13 @@ vector<Line> Epoch::lines(ImagePart imagePart)
 	  vector<Point> pointsToRemove({});
 	  for(Point &p : imagePart.allPoints())
 	  {
-	    if(linePointDistance(line, p) < 3)
+	    if(linePointDistance(line, p) < distanceThreshold)
 	    {
 	      pointsToRemove.push_back(p);
 	    }
 	  }
 	  
-	  if (pointsToRemove.size() > 50)
+	  if (pointsToRemove.size() > pointsThreshold)
 	  {
 	    imagePart.removePoints(pointsToRemove);
 	    lines.push_back(line);

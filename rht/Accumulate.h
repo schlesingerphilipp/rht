@@ -12,7 +12,7 @@ class Accumulate {
       Line line;
       Circle circle;
       void voteFor(Line voter);
-      bool isSimilarTo(Line l);
+      bool isSimilarTo(Line l,   float tolleranceTheta,  float tolleranceP);
       Accumulate(Line voter):line(voter),votes(1){};
       Accumulate(Circle voter):circle(voter),votes(1){};
   };

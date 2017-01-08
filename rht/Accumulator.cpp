@@ -15,7 +15,7 @@ vector< Circle > Accumulator::circles(vector< Circle > circles)
 {
 
 }
-vector< Line > Accumulator::candidateLines(vector< Line > lines)
+vector< Line > Accumulator::candidateLines(vector< Line > lines, float tolleranceTheta, float tolleranceP)
 {
   vector<Accumulate> accumulator({});
   for (Line &line : lines)
@@ -23,7 +23,7 @@ vector< Line > Accumulator::candidateLines(vector< Line > lines)
     bool contains = false;
     for (Accumulate &accumulate : accumulator)
     {
-      if (accumulate.isSimilarTo(line))
+      if (accumulate.isSimilarTo(line, tolleranceTheta, tolleranceP))
       {
 	accumulate.voteFor(line);
 	contains = true;

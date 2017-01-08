@@ -1,0 +1,4 @@
+
+       Foldername XStep YStep distanceThreshold, pointsThreshold, tolleranceTheta, tolleranceP, limitOfThreads
+
+./main simple 100 100 5 50 5 5 999 > ../images/simple/out.txt

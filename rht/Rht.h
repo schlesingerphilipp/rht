@@ -15,8 +15,8 @@ typedef vigra::MultiArray<2, int > BinaryArray;
 
 class Rht {
   private:
-    static Transformation summitUp(vector<future<vector<Line>>> &futureLines,  vector<future<vector<Circle>>> &futureCircles);
+    static Transformation summitUp(vector<future<vector<Line>>> &futureLines,  vector<future<vector<Circle>>> &futureCircles, float tolleranceTheta, float tolleranceP);
   public:
-    static Transformation transform(BinaryArray img, int xStep, int yStep);
+    static Transformation transform(BinaryArray img, int xStep, int yStep, int distanceThreshold, int pointsThreshold , float tolleranceTheta, float tolleranceP);
   };
 #endif 

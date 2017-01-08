@@ -70,13 +70,17 @@ int evaluating(char **argv)
  cannyEdgeImage(imageArray, edgeArray, 0.8, 4.0, 1);
  int xStep = atoi(argv[2]);
  int yStep = atoi(argv[3]);
+ int distanceThreshold = atoi(argv[4]);
+ int pointsThreshold = atoi(argv[5]);
+ int tolleranceTheta = atoi(argv[6]);
+ int tolleranceP = atoi(argv[7]);
  for (int i = 1; i < 21; i++)
  {
    auto start = std::chrono::high_resolution_clock::now();
-   Transformation t = Rht::transform(edgeArray, xStep, yStep);
+   Transformation t = Rht::transform(edgeArray, xStep, yStep, distanceThreshold, pointsThreshold, tolleranceTheta, tolleranceP);
    auto end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double, std::milli> fp_ms = end - start;
-   cout << i << "," << fp_ms.count() << "," << "all" << endl;
+   cout << fp_ms.count() << "," << "all" << endl;
    string path = "./../images/"+folder+"/out/"+std::to_string(i)+".png";
    printResults(edgeArray, t, path.c_str());
  }
@@ -88,7 +92,7 @@ int debugging(char** argv) {
     importImage(imageInfo, imageArray);
     BinaryArray edgeArray(imageInfo.shape());
     cannyEdgeImage(imageArray, edgeArray, 0.8, 4.0, 1);
-    Transformation t = Rht::transform(edgeArray, 100, 100);
+    Transformation t = Rht::transform(edgeArray, 100, 100, 5, 50, 5, 5);
     std::cout << "Lines: ";
     std::cout <<  t.lines.size()<< endl;;
     for (Line l : t.lines)

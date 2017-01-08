@@ -15,7 +15,7 @@ class Epoch {
     static int linePointDistance(Line line, Point point);
     static tuple<vector<Point>,vector<LinePart>, int> mapPointsToLine(Line line, ImagePart &imagePart);
   public:
-    static vector<Line> lines(ImagePart imagePart);
+    static vector<Line> lines(ImagePart imagePart, int distanceThreshold, int pointsThreshold , float tolleranceTheta, float tolleranceP);
     static vector<Circle> circles(ImagePart imagePart);
   };
 #endif

@@ -10,10 +10,8 @@ void Accumulate::voteFor(Line voter)
   line = Line(theta,p);
   votes +=1;
 }
-bool Accumulate::isSimilarTo(Line l)
+bool Accumulate::isSimilarTo(Line l, float tolleranceTheta,  float tolleranceP)
 {
-  float tolleranceP = 5;
-  float tolleranceTheta = 5;
   if (abs(get<0>(line) - get<0>(l)) < tolleranceTheta) {
     if (abs(get<1>(line) - get<1>(l)) < tolleranceP) {
       return true;
