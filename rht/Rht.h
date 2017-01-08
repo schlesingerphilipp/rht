@@ -17,6 +17,6 @@ class Rht {
   private:
     static Transformation summitUp(vector<future<vector<Line>>> &futureLines,  vector<future<vector<Circle>>> &futureCircles);
   public:
-    static Transformation transform(BinaryArray img);
+    static Transformation transform(BinaryArray img, int xStep, int yStep);
   };
 #endif 

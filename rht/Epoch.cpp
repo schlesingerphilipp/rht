@@ -4,6 +4,7 @@
 #include "ConvergentMapper.cpp"
 #include "Accumulator.cpp"
 #include "LinePart.h"
+#include <chrono>
 
 #include <math.h>       /* atan */
 using namespace std;
@@ -25,10 +26,16 @@ vector<Line> Epoch::lines(ImagePart imagePart)
     {
       break;
     }
+    auto start = std::chrono::high_resolution_clock::now();
+    
     vector<Line> convergedLines = ConvergentMapper::lines(points);
     vector< Line > candidateLines = Accumulator::candidateLines(convergedLines);
     if (candidateLines.size() > 0)
     {
+      auto end = std::chrono::high_resolution_clock::now();
+      std::chrono::duration<double, std::milli> fp_ms = end - start;
+      cout << fp_ms.count() << "," << "converge n accumulate" << endl;
+      auto start2 = std::chrono::high_resolution_clock::now();
       bool trueLine = false;
       for (Line &line : candidateLines)
       {
@@ -57,6 +64,9 @@ vector<Line> Epoch::lines(ImagePart imagePart)
 	  }
 	  
       }
+      auto end2 = std::chrono::high_resolution_clock::now();
+      std::chrono::duration<double, std::milli> fp_ms2 = end2 - start2;
+      cout << fp_ms2.count() << "," << "check true line" << endl;
       if (!trueLine)
       {
 	break;
@@ -66,6 +76,7 @@ vector<Line> Epoch::lines(ImagePart imagePart)
     {
       break;
     }
+    
   } 
   return lines;
 }

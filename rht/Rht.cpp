@@ -8,15 +8,14 @@
 #include <vigra/multi_array.hxx>
 #include <future>
 
+
 typedef vigra::MultiArray<2, int > BinaryArray;
 typedef tuple<int,int,float> Circle;
 typedef tuple<float,float> Line;
 
 using namespace std;
-Transformation Rht::transform(BinaryArray img)
+Transformation Rht::transform(BinaryArray img, int xStep, int yStep)
 {
-  int xStep = 100;
-  int yStep =  100;
   //create the convergers, and start them
   vector<future<vector<Line>>> futureLines;
   vector<future<vector<Circle>>> futureCircles;
@@ -58,6 +57,7 @@ Transformation Rht::summitUp(vector<future<vector<Line>>> &futureLines,  vector<
     vector<Circle> circlesFromSeperation(circle.get());
     circles.insert(circles.end(), circlesFromSeperation.begin(), circlesFromSeperation.end());
   }
-  return Transformation(lines,circles);
+  vector< Line > accumulatedLines = Accumulator::candidateLines(lines);
+  return Transformation(accumulatedLines,circles);
 }
 
