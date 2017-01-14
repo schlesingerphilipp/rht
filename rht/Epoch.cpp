@@ -5,7 +5,7 @@
 #include "Accumulator.cpp"
 #include "LinePart.h"
 #include <chrono>
-
+#include <map>
 #include <math.h>       /* atan */
 using namespace std;
 typedef tuple<int,int,float> Circle;
@@ -15,6 +15,10 @@ typedef tuple<int,int> Start;
 typedef tuple<int,int> End;
 typedef vigra::MultiArray<2, int > BinaryArray;
 
+bool sortMatches(tuple<vector<Point>,Line> one,tuple<vector<Point>,Line> two)
+{
+  return get<0>(one).size() > get<0>(two).size();
+}
 
 vector<Line> Epoch::lines(ImagePart imagePart, int distanceThreshold, int pointsThreshold , float tolleranceTheta, float tolleranceP)
 {
@@ -32,10 +36,8 @@ vector<Line> Epoch::lines(ImagePart imagePart, int distanceThreshold, int points
     vector< Line > candidateLines = Accumulator::candidateLines(convergedLines, tolleranceTheta, tolleranceP);
     if (candidateLines.size() > 0)
     {
-      auto end = std::chrono::high_resolution_clock::now();
-      std::chrono::duration<double, std::milli> fp_ms = end - start;
-      cout << fp_ms.count() << "," << "converge n accumulate" << endl;
-      auto start2 = std::chrono::high_resolution_clock::now();
+      vector<tuple<vector<Point>, Line>>matches({});
+      auto start = std::chrono::high_resolution_clock::now();
       bool trueLine = false;
       for (Line &line : candidateLines)
       {
@@ -58,15 +60,19 @@ vector<Line> Epoch::lines(ImagePart imagePart, int distanceThreshold, int points
 	  
 	  if (pointsToRemove.size() > pointsThreshold)
 	  {
-	    imagePart.removePoints(pointsToRemove);
-	    lines.push_back(line);
+	    matches.push_back(tuple<vector<Point>,Line>(pointsToRemove, line));
 	    trueLine = true;
-	  }
-	  
+	  }	  
       }
-      auto end2 = std::chrono::high_resolution_clock::now();
-      std::chrono::duration<double, std::milli> fp_ms2 = end2 - start2;
-      cout << fp_ms2.count() << "," << "check true line" << endl;
+      sort(matches.begin(),matches.end(),sortMatches);
+      for (int m = 0; m < matches.size() && m < 3; m++)
+      {
+	imagePart.removePoints(get<0>(matches[m]));
+	lines.push_back(get<1>(matches[m]));
+      }
+      auto end = std::chrono::high_resolution_clock::now();
+      std::chrono::duration<double, std::milli> fp_ms2 = end - start;
+      cout << fp_ms2.count() << "," << "trueline" << endl;
       if (!trueLine)
       {
 	break;
