@@ -27,7 +27,7 @@ vector< Line > ConvergentMapper::lines(vector< Point > points)
     float p;
     if (y1 -y2 == 0)
     {
-      theta = 90;
+      theta = 1.57;
       p = x1;
     }
     else if(x1-x2 == 0)
@@ -38,10 +38,9 @@ vector< Line > ConvergentMapper::lines(vector< Point > points)
     else
     {
       float x1x2 = x1-x2;
-      float y1y2 = y1-y2;
-      float x1x2y1y2 = x1x2/y1y2;
-      float aTan = atan2(y1y2, x1x2);
-      theta = abs(aTan) * radToDeg;
+      float y1y2 = y2-y1;
+      theta = atan2(x1x2, y1y2);
+      //theta = abs(aTan) * radToDeg;
       
       //In which quadrant does p point?
       /*float m = y1y2 / x1x2;
@@ -57,6 +56,7 @@ vector< Line > ConvergentMapper::lines(vector< Point > points)
       }*/
     
        p = 0.5 * abs(((x2 - x1) * (y1 + y2) - (y2 - y1) * (x1 + x2)) / sqrt((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1)));
+       //p = ((x1+x2)/2) * sin(theta) + ((y1+y2)/2) * cos(theta);
     }
     /*if (p == 0) 
     {

@@ -58,17 +58,17 @@ Point ImagePart::next()
     iterX = std::round(iterP);
     iterY += 1;
   }
-  else if (iterTheta == 90) 
+  else if (iterTheta == 1.57) 
   {
     iterY =  std::round(iterP);
     iterX += 1;
   }
   else
   {
-    const float  degToRad  = 3.14159265 / 180;
-    float radT = iterTheta*degToRad;
-    float cosT = cos(radT);
-    float sinT = sin(radT);
+    //const float  degToRad  = 3.14159265 / 180;
+    //float radT = iterTheta*degToRad;
+    float cosT = cos(iterTheta);
+    float sinT = sin(iterTheta);
     iterX += 1;
     iterY = std::round((iterP - (iterX * cosT)) / sinT);
   }

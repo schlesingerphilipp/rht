@@ -173,20 +173,20 @@ int Epoch::linePointDistance(Line line, Point point)
   {
     return abs(x - p);
   }
-  else if(theta == 90)
+  else if(theta == 1.57)
   {
     return abs(y - p);
   }
-  const float  degToRad  = 3.14159265 / 180;
-  double radT = theta*degToRad;
-  double cosT = std::cos(radT);
-  double sinT = std::sin(radT);
-  int yLine = round((p - x * cosT) / sinT);
-  int xLine = round((p - y * sinT) / cosT);
+  //const float  degToRad  = 3.14159265 / 180;
+ // double radT = theta*degToRad;
+  double cosT = std::cos(theta);
+  double sinT = std::sin(theta);
+  int yLine = (p - x * cosT) / sinT;
+  int xLine = (p - y * sinT) / cosT;
   float a = abs(yLine - y);
   float b = abs(xLine - x);
   float c = sqrt((a*a)+(b*b));
   //a*b*0.5 = 0.5 * c * height
-  int height = a * b / c;
+  int height = (a * b) / c;
   return abs(height);
 }

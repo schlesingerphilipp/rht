@@ -58,13 +58,13 @@ def evaluate(lines, folder, experimentPrefix):
 def largeImageExperiment():
   folder = "experiment1"
   #folderCrossing = str(i) + "shortCrossing" 
-  xyStep = 30
-  points = 15
+  xyStep = 100
+  points = 33
   for xyScale in range(1,5):
     xySteps = str(xyStep * xyScale)
     pointss = str(points * xyScale)
     #for short
-    cmd1 = ["./../build/main",  folder, xySteps, xySteps, "5", pointss, "5","11"]
+    cmd1 = ["./../build/main",  folder, xySteps, xySteps, "5", pointss, "15","15"]
     print(cmd1)
     p1 = subprocess.Popen(cmd1, stdout=subprocess.PIPE)
     (out1, code) = p1.communicate()

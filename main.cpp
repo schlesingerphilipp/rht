@@ -38,7 +38,7 @@ void printResults(BinaryArray edgeArray, Transformation t, string path)
       rgb_image[Shape2(x,y)]= edgeArray[Shape2(x,y)] == 1 ? RGBValue<UInt8>(0,255,0) : RGBValue<UInt8>(0,0,0) ;
     }
   }
-   const float  degToRad  = 3.14159265 / 180;
+   //const float  degToRad  = 3.14159265 / 180;
        // exportImage(edgeArray, "./../images/edge.png");
     //edgeArray = 0;
     for (Line l : t.lines)
@@ -53,7 +53,7 @@ void printResults(BinaryArray edgeArray, Transformation t, string path)
 	  rgb_image[Shape2(x,y)] = RGBValue<UInt8>(255,0,0);
 	}
       }
-      else if (theta == 90)
+      else if (theta == 1.57)
       {
 	int y = std::round(p);
 	int imgY = edgeArray.height() - y; 
@@ -64,9 +64,9 @@ void printResults(BinaryArray edgeArray, Transformation t, string path)
       }
       else
       {
-	float radT = theta*degToRad;
-	float cosT = cos(radT);
-	float sinT = sin(radT);
+	//float radT = theta*degToRad;
+	float cosT = cos(theta);
+	float sinT = sin(theta);
 	for (int x = 0; x < edgeArray.width(); x++)
 	{   
 	  int y = std::round((p - (x * cosT)) / sinT);
@@ -108,12 +108,12 @@ int evaluating(char **argv)
  return 0;
 }
 int debugging(char** argv) {
-    ImageImportInfo imageInfo("../images/experiment1/image.png");  
+    ImageImportInfo imageInfo("../images/easy4.png");  
     MultiArray<2, float > imageArray(imageInfo.shape());  
     importImage(imageInfo, imageArray);
     BinaryArray edgeArray(getEdgeArray(imageArray));
     exportImage(edgeArray, "../images/edge.png");
-    Transformation t = Rht::transform(edgeArray, 100, 100, 7, 30, 10, 20);
+    Transformation t = Rht::transform(edgeArray, 100, 100, 7, 33, 15, 15);
     std::cout << "Lines: ";
     std::cout <<  t.lines.size()<< endl;;
     for (Line l : t.lines)
