@@ -53,8 +53,7 @@ def evaluate(lines, folder, experimentPrefix):
   ax.set_xticklabels(('Total Time', 'Converging', 'Accumulating', 'True Line check'))
   plt.savefig("./../images/" + folder + "/" + experimentPrefix + "eval.png")
 
-#i = 1
-#while i < 11:
+
 def largeImageExperiment():
   folder = "experiment1"
   #folderCrossing = str(i) + "shortCrossing" 
