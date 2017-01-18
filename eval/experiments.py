@@ -51,7 +51,7 @@ def evaluate(lines, folder, experimentPrefix):
   ax.set_title('Mean time consumed by different parts')
   ax.set_xticks(ind + width)
   ax.set_xticklabels(('Total Time', 'Converging', 'Accumulating', 'True Line check'))
-  plt.savefig("./../images/" + folder + experimentPrefix + "eval.png")
+  plt.savefig("./../images/" + folder + "/" + experimentPrefix + "eval.png")
 
 #i = 1
 #while i < 11:
@@ -59,12 +59,12 @@ def largeImageExperiment():
   folder = "experiment1"
   #folderCrossing = str(i) + "shortCrossing" 
   xyStep = 100
-  points = 33
+  points = 50
   for xyScale in range(1,5):
     xySteps = str(xyStep * xyScale)
-    pointss = str(points * xyScale)
+    pointss = str(points)# + (10 * xyScale))
     #for short
-    cmd1 = ["./../build/main",  folder, xySteps, xySteps, "5", pointss, "15","15"]
+    cmd1 = ["./../build/main",  folder, xySteps, xySteps, "10", pointss, "15","15"]
     print(cmd1)
     p1 = subprocess.Popen(cmd1, stdout=subprocess.PIPE)
     (out1, code) = p1.communicate()

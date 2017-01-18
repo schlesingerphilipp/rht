@@ -16,17 +16,6 @@ typedef tuple<float,float> Line;
 using namespace std;
 Transformation Rht::transform(BinaryArray img, int xStep, int yStep, int distanceThreshold, int pointsThreshold , float tolleranceTheta, float tolleranceP)
 {
-  //float maximumThreads = (img.width() / xStep) * (img.height() / yStep);
-  //if (maximumThreads > limitOfThreads)
-  //{
-   //Transformation trans(vector<Line>({}),vector<Circle>({}));
-   //float requiredThreadsLeft = maximumThreads;
-   //while(requiredThreadsLeft > 0)
-   //{
-     
-   //}
-    
-  //}
   //create the convergers, and start them
   vector<future<vector<Line>>> futureLines;
   vector<future<vector<Circle>>> futureCircles;

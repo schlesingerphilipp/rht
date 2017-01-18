@@ -38,47 +38,44 @@ void printResults(BinaryArray edgeArray, Transformation t, string path)
       rgb_image[Shape2(x,y)]= edgeArray[Shape2(x,y)] == 1 ? RGBValue<UInt8>(0,255,0) : RGBValue<UInt8>(0,0,0) ;
     }
   }
-   //const float  degToRad  = 3.14159265 / 180;
-       // exportImage(edgeArray, "./../images/edge.png");
-    //edgeArray = 0;
-    for (Line l : t.lines)
+  for (Line l : t.lines)
+  {
+    float theta = std::get<0>(l);
+    float p = std::get<1>(l);
+    if (theta == 0)
     {
-      float theta = std::get<0>(l);
-      float p = std::get<1>(l);
-      if (theta == 0)
+      int x = std::round(p);
+      for (int y = 0; y < edgeArray.height(); y ++)
       {
-	int x = std::round(p);
-	for (int y = 0; y < edgeArray.height(); y ++)
-	{
-	  rgb_image[Shape2(x,y)] = RGBValue<UInt8>(255,0,0);
-	}
+	rgb_image[Shape2(x,y)] = RGBValue<UInt8>(255,0,0);
       }
-      else if (theta == 1.57)
+    }
+    else if (theta == 1.57)
+    {
+      int y = std::round(p);
+      int imgY = edgeArray.height() - y; 
+      for (int x = 0; x < edgeArray.width(); x ++)
       {
-	int y = std::round(p);
-	int imgY = edgeArray.height() - y; 
-	for (int x = 0; x < edgeArray.width(); x ++)
+	rgb_image[Shape2(x,imgY)] = RGBValue<UInt8>(255,0,0);
+      }
+    }
+    else
+    {
+      //float radT = theta*degToRad;
+      float cosT = cos(theta);
+      float sinT = sin(theta);
+      for (int x = 0; x < edgeArray.width(); x++)
+      {   
+	int y = std::round((p - (x * cosT)) / sinT);
+	int imgY = edgeArray.height() - y;
+	if (imgY < edgeArray.height() && imgY > 0)
 	{
 	  rgb_image[Shape2(x,imgY)] = RGBValue<UInt8>(255,0,0);
 	}
       }
-      else
-      {
-	//float radT = theta*degToRad;
-	float cosT = cos(theta);
-	float sinT = sin(theta);
-	for (int x = 0; x < edgeArray.width(); x++)
-	{   
-	  int y = std::round((p - (x * cosT)) / sinT);
-	  int imgY = edgeArray.height() - y;
-	  if (imgY < edgeArray.height() && imgY > 0)
-	  {
-	    rgb_image[Shape2(x,imgY)] = RGBValue<UInt8>(255,0,0);
-	  }
-	}
-      }
     }
-    exportImage(rgb_image, path.c_str());
+  }
+  exportImage(rgb_image, path.c_str());
 }
 int evaluating(char **argv)
 {
@@ -94,7 +91,7 @@ int evaluating(char **argv)
  int pointsThreshold = atoi(argv[5]);
  int tolleranceTheta = atoi(argv[6]);
  int tolleranceP = atoi(argv[7]);
- cout << "xyScale," << std::to_string(xStep) << "," << folder << endl;
+ //cout << "xyScale," << std::to_string(xStep) << "," << folder << endl;
  for (int i = 1; i < 21; i++)
  {
    auto start = std::chrono::high_resolution_clock::now();

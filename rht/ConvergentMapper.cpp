@@ -39,30 +39,9 @@ vector< Line > ConvergentMapper::lines(vector< Point > points)
     {
       float x1x2 = x1-x2;
       float y1y2 = y2-y1;
-      theta = atan2(x1x2, y1y2);
-      //theta = abs(aTan) * radToDeg;
-      
-      //In which quadrant does p point?
-      /*float m = y1y2 / x1x2;
-      float intercept = y1 - x1 * m;
-      if (intercept > 0 && m > 0)
-      {
-	
-	theta += 90;
-      }
-      else if(intercept < 0 && m > 0)
-      {
-	theta += 270;
-      }*/
-    
-       p = 0.5 * abs(((x2 - x1) * (y1 + y2) - (y2 - y1) * (x1 + x2)) / sqrt((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1)));
-       //p = ((x1+x2)/2) * sin(theta) + ((y1+y2)/2) * cos(theta);
+      theta = atan2(x1x2, y1y2);    
+      p = 0.5 * abs(((x2 - x1) * (y1 + y2) - (y2 - y1) * (x1 + x2)) / sqrt((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1)));
     }
-    /*if (p == 0) 
-    {
-      //irrelevant. To do a condition for this is way to costly
-      continue;//TODO: Infinitly many posible lines
-    }*/
     Line line(theta,p);
     lines.push_back(line);
   }

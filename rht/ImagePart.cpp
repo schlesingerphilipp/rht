@@ -65,8 +65,6 @@ Point ImagePart::next()
   }
   else
   {
-    //const float  degToRad  = 3.14159265 / 180;
-    //float radT = iterTheta*degToRad;
     float cosT = cos(iterTheta);
     float sinT = sin(iterTheta);
     iterX += 1;
@@ -117,9 +115,6 @@ void ImagePart::removePoints(vector< Point > &points)
     int y = image.height() - (get<1>(p) - polarYOrigin);
     image[vigra::Shape2(x,y)] = 0;
   }
-  //int all = allPoints().size();
-  //std::string name = "./../images/edge/" + std::to_string (all) + ".png";
-  //vigra::exportImage(image, name);
 }
 
 
