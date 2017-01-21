@@ -5,8 +5,18 @@ import numpy as np
 import matplotlib.pyplot as plt
 import csv
 
+def printGraphic(means, labels, ylabel, title, path):
+  ind = np.arange(len(means)) 
+  width = 0.35       # the width of the bars
+  fig, ax = plt.subplots()
+  rects = ax.bar(ind, means, width, color='r')
+  ax.set_ylabel(ylabel)
+  ax.set_title(title)
+  ax.set_xticks(ind + width)
+  ax.set_xticklabels(labels)
+  plt.savefig(path)
 
-def evaluate(lines, folder, experimentPrefix):
+def collectData(lines, folder, experimentPrefix):
   allCount = 0
   allSum = 0
   convergeCount = 0
@@ -37,48 +47,58 @@ def evaluate(lines, folder, experimentPrefix):
     elif key == "accumulating":
       accumulateSum += time
       accumulateCount +=1
-  meanAll = allSum / allCount
-  meanConverge = convergeSum / convergeCount
-  meanTrueLine = trueLineSum / trueLineCount
-  meanAccumulate = accumulateSum / accumulateCount
-  means = (meanAll,meanConverge, meanAccumulate, meanTrueLine)
-  ind = np.arange(4)  # the x locations for the groups
-  width = 0.35       # the width of the bars
-  fig, ax = plt.subplots()
-  rects = ax.bar(ind, means, width, color='r')
-  # add some text for labels, title and axes ticks
-  ax.set_ylabel('Time in ms')
-  ax.set_title('Mean time consumed by different parts')
-  ax.set_xticks(ind + width)
-  ax.set_xticklabels(('Total Time', 'Converging', 'Accumulating', 'True Line check'))
-  plt.savefig("./../images/" + folder + "/" + experimentPrefix + "eval.png")
+  meanAll = allSum / 20 #allCount
+  meanConverge = convergeSum / 20# convergeCount
+  meanTrueLine = trueLineSum / 20 #trueLineCount
+  meanAccumulate = accumulateSum / 20#accumulateCount
+  means = (meanAll, meanConverge, meanAccumulate, meanTrueLine)
+  return means
 
+
+def evaluateParameters(lines, folder, experimentPrefix):
+  means = collectData(lines, folder, experimentPrefix)
+  path = "./../images/" + folder + "/" + experimentPrefix + "eval.png"
+  labels = ('Converging', 'Accumulating', 'True Line check')
+  title = 'Mean time consumed by different parts'
+  ylabel = 'Time in ms'
+  printGraphic(means[1:4], labels, ylabel, title, path)
+  
+def numberOfThreads(folder, points, smoothing):
+  means = []
+  labels = []
+  for threads in range(1,65):
+    cmd1 = ["./../build/main",  folder, "50", "50", "3", points, "15","15", str(threads), str(smoothing)]
+    print(cmd1)
+    p1 = subprocess.Popen(cmd1, stdout=subprocess.PIPE)
+    (out1, code) = p1.communicate()
+    output1 = out1.decode('utf-8')
+    mean = collectData(output1.split("\n"), folder, str(threads))[0]
+    means.append(mean)
+    labels.append(str(threads))
+  path = "./../images/" + folder + "/eval.png"
+  title = 'Mean time consumed with given number of threads'
+  ylabel = 'Time in ms'
+  printGraphic(means, labels, ylabel, title, path)
 
 def largeImageExperiment():
   folder = "experiment1"
   #folderCrossing = str(i) + "shortCrossing" 
-  xyStep = 100
-  points = 50
-  for xyScale in range(1,5):
+  xyStep = 20
+  points = 30
+  for xyScale in range(1,10):
     xySteps = str(xyStep * xyScale)
-    pointss = str(points)# + (10 * xyScale))
+    pointss = str(points +  3 * xyScale * xyScale)# + (10 * xyScale))
     #for short
-    cmd1 = ["./../build/main",  folder, xySteps, xySteps, "10", pointss, "15","15"]
+    cmd1 = ["./../build/main",  folder, xySteps, xySteps, "2", pointss, "15","15"]
     print(cmd1)
     p1 = subprocess.Popen(cmd1, stdout=subprocess.PIPE)
     (out1, code) = p1.communicate()
     output1 = out1.decode('utf-8')
     f = open("../images/" +folder + "/" + xySteps + "out.csv",'wb')
     f.write(out1)
-    evaluate(output1.split("\n"), folder, xySteps)
-    #for shortCrossing
-    #cmd2 = ["./../build/main",  folderCrossing, xySteps, xySteps, "5", pointss, "5","5"]
-    #p2 = subprocess.Popen(cmd2, stdout=subprocess.PIPE)
-    #(out2, code) = p2.communicate()
-    #outPut2 = out2.decode('utf-8')
-    #f = open("../images/" +folderCrossing + "/" + xySteps + "out.csv",'wb')
-    #f.write(out2)
-    #evaluate(output2.split("\n"), folderCrossing, xySteps)
-  #i +=1
-largeImageExperiment()
+    evaluateParameters(output1.split("\n"), folder, xySteps)
+
+if __name__ == "__main__":
+  numberOfThreads("experiment1", "30", 0.0)
+  numberOfThreads("real3", "300", 3.0)
 

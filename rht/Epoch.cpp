@@ -29,9 +29,7 @@ vector<Line> Epoch::lines(ImagePart imagePart, int distanceThreshold, int points
     if (points.size() == 0)
     {
       break;
-    }
-    auto start = std::chrono::high_resolution_clock::now();
-    
+    }    
     vector<Line> convergedLines = ConvergentMapper::lines(points);
     vector< Line > candidateLines = Accumulator::candidateLines(convergedLines, tolleranceTheta, tolleranceP);
     if (candidateLines.size() > 0)
@@ -60,19 +58,21 @@ vector<Line> Epoch::lines(ImagePart imagePart, int distanceThreshold, int points
 	  
 	  if (pointsToRemove.size() > pointsThreshold)
 	  {
-	    matches.push_back(tuple<vector<Point>,Line>(pointsToRemove, line));
+	    lines.push_back(line);
+	    imagePart.removePoints(pointsToRemove);
+	    //matches.push_back(tuple<vector<Point>,Line>(pointsToRemove, line));
 	    trueLine = true;
 	  }	  
       }
-      sort(matches.begin(),matches.end(),sortMatches);
+      /*sort(matches.begin(),matches.end(),sortMatches);
       for (int m = 0; m < matches.size() && m < 3; m++)
       {
 	imagePart.removePoints(get<0>(matches[m]));
 	lines.push_back(get<1>(matches[m]));
-      }
+      }*/
       auto end = std::chrono::high_resolution_clock::now();
       std::chrono::duration<double, std::milli> fp_ms2 = end - start;
-      cout << fp_ms2.count() << "," << "trueline" << endl;
+      //cout << fp_ms2.count() << "," << "trueline" << endl;
       if (!trueLine)
       {
 	break;

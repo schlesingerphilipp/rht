@@ -17,6 +17,6 @@ class Rht {
   private:
     static Transformation summitUp(vector<future<vector<Line>>> &futureLines,  vector<future<vector<Circle>>> &futureCircles, float tolleranceTheta, float tolleranceP);
   public:
-    static Transformation transform(BinaryArray img, int xStep, int yStep, int distanceThreshold, int pointsThreshold , float tolleranceTheta, float tolleranceP);
+    static Transformation transform(BinaryArray img, int xStep, int yStep, int distanceThreshold, int pointsThreshold , float tolleranceTheta, float tolleranceP, int numberOfThreads);
   };
 #endif 

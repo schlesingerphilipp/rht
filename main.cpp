@@ -7,6 +7,8 @@
 #include "math.h"
 #include <string.h>
 #include <chrono>
+#include <vigra/multi_convolution.hxx> 
+#include <vigra/multi_blockwise.hxx>
 
 
 using namespace vigra;
@@ -84,18 +86,22 @@ int evaluating(char **argv)
  ImageImportInfo imageInfo(imgPath.c_str());  
  MultiArray<2, float > imageArray(imageInfo.shape());  
  importImage(imageInfo, imageArray);
- BinaryArray edgeArray(getEdgeArray(imageArray));
+ MultiArray<2, float > smoothed(imageArray.shape());
+ double smoothing = atoi(argv[9]);
+ gaussianSmoothMultiArray(imageArray, smoothed, smoothing);
+ BinaryArray edgeArray(getEdgeArray(smoothed));
  int xStep = atoi(argv[2]);
  int yStep = atoi(argv[3]);
  int distanceThreshold = atoi(argv[4]);
  int pointsThreshold = atoi(argv[5]);
  int tolleranceTheta = atoi(argv[6]);
  int tolleranceP = atoi(argv[7]);
+ int numberOfThreads = atoi(argv[8]);
  //cout << "xyScale," << std::to_string(xStep) << "," << folder << endl;
  for (int i = 1; i < 21; i++)
  {
    auto start = std::chrono::high_resolution_clock::now();
-   Transformation t = Rht::transform(edgeArray, xStep, yStep, distanceThreshold, pointsThreshold, tolleranceTheta, tolleranceP);
+   Transformation t = Rht::transform(edgeArray, xStep, yStep, distanceThreshold, pointsThreshold, tolleranceTheta, tolleranceP, numberOfThreads);
    auto end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double, std::milli> fp_ms = end - start;
    cout << fp_ms.count() << "," << "all" << endl;
@@ -105,12 +111,19 @@ int evaluating(char **argv)
  return 0;
 }
 int debugging(char** argv) {
-    ImageImportInfo imageInfo("../images/easy4.png");  
-    MultiArray<2, float > imageArray(imageInfo.shape());  
+    ImageImportInfo imageInfo("../images/real.png");  
+    MultiArray<2, float > imageArray(imageInfo.shape()); 
     importImage(imageInfo, imageArray);
-    BinaryArray edgeArray(getEdgeArray(imageArray));
+    MultiArray<2, float > smoothed(imageArray.shape()); 
+    gaussianSmoothMultiArray(imageArray, smoothed, 3.0);
+    //BinaryArray edgeArray(imageArray.shape());
+    //cannyEdgeImage(smoothed, edgeArray, 0.8, 4.0, 1);
+    BinaryArray edgeArray(getEdgeArray(smoothed));
     exportImage(edgeArray, "../images/edge.png");
-    Transformation t = Rht::transform(edgeArray, 100, 100, 7, 33, 15, 15);
+    if (false) {
+      return 0; 
+    }
+    Transformation t = Rht::transform(edgeArray, 50, 50, 3, 300, 15, 15, 999);
     std::cout << "Lines: ";
     std::cout <<  t.lines.size()<< endl;;
     for (Line l : t.lines)

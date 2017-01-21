@@ -7,18 +7,19 @@
 #include "Transformation.h"
 #include <vigra/multi_array.hxx>
 #include <future>
-
+#include "ThreadPol.h"
 
 typedef vigra::MultiArray<2, int > BinaryArray;
 typedef tuple<int,int,float> Circle;
 typedef tuple<float,float> Line;
 
 using namespace std;
-Transformation Rht::transform(BinaryArray img, int xStep, int yStep, int distanceThreshold, int pointsThreshold , float tolleranceTheta, float tolleranceP)
+Transformation Rht::transform(BinaryArray img, int xStep, int yStep, int distanceThreshold, int pointsThreshold , float tolleranceTheta, float tolleranceP, int numberOfThreads)
 {
   //create the convergers, and start them
   vector<future<vector<Line>>> futureLines;
   vector<future<vector<Circle>>> futureCircles;
+  ThreadPool pool(numberOfThreads);
   int x = 0;
   int origX = 0;
   while(x < img.width())
@@ -36,8 +37,12 @@ Transformation Rht::transform(BinaryArray img, int xStep, int yStep, int distanc
       BinaryArray subImg(img.subarray(topLeft, bottomRight));
       ImagePart imagePart(orig,subImg, origP);
       origY = y;
-      auto fLines = async(launch::async,*Epoch::lines, imagePart, distanceThreshold, pointsThreshold, tolleranceTheta, tolleranceP);
-      auto fCircles = async(launch::async,*Epoch::circles, imagePart);
+      //auto fLines = async(launch::async,*Epoch::lines, imagePart, distanceThreshold, pointsThreshold, tolleranceTheta, tolleranceP);
+      //auto fCircles = async(launch::async,*Epoch::circles, imagePart);
+      auto fLines = pool.enqueue(*Epoch::lines, imagePart, distanceThreshold, pointsThreshold, tolleranceTheta, tolleranceP);
+      auto fCircles = pool.enqueue(Epoch::circles, imagePart);
+
+      
       futureLines.push_back(move(fLines));
       futureCircles.push_back(move(fCircles));
     }
