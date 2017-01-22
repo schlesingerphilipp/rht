@@ -99,6 +99,6 @@ def largeImageExperiment():
     evaluateParameters(output1.split("\n"), folder, xySteps)
 
 if __name__ == "__main__":
-  numberOfThreads("experiment1", "200", 0.0)
-  numberOfThreads("real", "300", 3.0)
+  numberOfThreads("experiment1", "40", 0.0)
+  numberOfThreads("real", "50", 3.0)
 
