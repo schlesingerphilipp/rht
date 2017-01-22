@@ -12,7 +12,6 @@ class ImagePart {
 
 
   private:
-    Point origin;
     int polarYOrigin;
     int myrandom (int i);
     BinaryArray image;
@@ -25,6 +24,7 @@ class ImagePart {
     Point topRight;
 
   public:
+    Point origin;
     ImagePart(Point &orig, BinaryArray &subimage, int polarY): origin(orig), image(subimage), polarYOrigin(polarY){};
     vector<Point> selectRandomPoints();
     vector<Point> allPoints();

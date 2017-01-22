@@ -10,6 +10,7 @@
 using namespace std;
 typedef tuple<int,int,float> Circle;
 typedef tuple<float,float> Line;
+typedef tuple<float,float, int, int> LineWithOrigin;
 typedef tuple<int,int> Point;
 typedef tuple<int,int> Start;
 typedef tuple<int,int> End;
@@ -20,9 +21,9 @@ bool sortMatches(tuple<vector<Point>,Line> one,tuple<vector<Point>,Line> two)
   return get<0>(one).size() > get<0>(two).size();
 }
 
-vector<Line> Epoch::lines(ImagePart imagePart, int distanceThreshold, int pointsThreshold , float tolleranceTheta, float tolleranceP)
+vector<LineWithOrigin> Epoch::lines(ImagePart imagePart, int distanceThreshold, int pointsThreshold , float tolleranceTheta, float tolleranceP)
 {
-  vector<Line> lines;
+  vector<LineWithOrigin> lines;
   while (true)
   {
     vector<Point> points = imagePart.selectRandomPoints();
@@ -58,7 +59,8 @@ vector<Line> Epoch::lines(ImagePart imagePart, int distanceThreshold, int points
 	  
 	  if (pointsToRemove.size() > pointsThreshold)
 	  {
-	    lines.push_back(line);
+	    LineWithOrigin lWithO = LineWithOrigin(get<0>(line),get<1>(line), get<0>(imagePart.origin), get<1>(imagePart.origin));
+	    lines.push_back(lWithO);
 	    imagePart.removePoints(pointsToRemove);
 	    //matches.push_back(tuple<vector<Point>,Line>(pointsToRemove, line));
 	    trueLine = true;

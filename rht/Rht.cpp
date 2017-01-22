@@ -11,13 +11,13 @@
 
 typedef vigra::MultiArray<2, int > BinaryArray;
 typedef tuple<int,int,float> Circle;
-typedef tuple<float,float> Line;
+typedef tuple<float,float, int, int> LineWO;
 
 using namespace std;
 Transformation Rht::transform(BinaryArray img, int xStep, int yStep, int distanceThreshold, int pointsThreshold , float tolleranceTheta, float tolleranceP, int numberOfThreads)
 {
   //create the convergers, and start them
-  vector<future<vector<Line>>> futureLines;
+  vector<future<vector<LineWO>>> futureLines;
   vector<future<vector<Circle>>> futureCircles;
   ThreadPool pool(numberOfThreads);
   int x = 0;
@@ -50,11 +50,11 @@ Transformation Rht::transform(BinaryArray img, int xStep, int yStep, int distanc
   }
   return summitUp(futureLines,futureCircles, tolleranceTheta, tolleranceP);
 }
-Transformation Rht::summitUp(vector<future<vector<Line>>> &futureLines,  vector<future<vector<Circle>>> &futureCircles, float tolleranceTheta, float tolleranceP )
+Transformation Rht::summitUp(vector<future<vector<LineWO>>> &futureLines,  vector<future<vector<Circle>>> &futureCircles, float tolleranceTheta, float tolleranceP )
 {
-  vector<Line> lines;
+  vector<LineWO> lines;
   for (auto &line : futureLines){
-    vector<Line> linesFromSeperation(line.get());
+    vector<LineWO> linesFromSeperation(line.get());
     lines.insert(lines.end(), linesFromSeperation.begin(), linesFromSeperation.end());
   }
   vector<Circle> circles;
@@ -62,7 +62,7 @@ Transformation Rht::summitUp(vector<future<vector<Line>>> &futureLines,  vector<
     vector<Circle> circlesFromSeperation(circle.get());
     circles.insert(circles.end(), circlesFromSeperation.begin(), circlesFromSeperation.end());
   }
-  vector< Line > accumulatedLines = Accumulator::candidateLines(lines, tolleranceTheta, tolleranceP);
-  return Transformation(accumulatedLines,circles);
+  //vector< LineWO > accumulatedLines = Accumulator::candidateLines(lines, tolleranceTheta, tolleranceP);
+  return Transformation(lines,circles);
 }
 
