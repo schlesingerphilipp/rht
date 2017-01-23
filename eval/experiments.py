@@ -100,5 +100,5 @@ def largeImageExperiment():
 
 if __name__ == "__main__":
   numberOfThreads("experiment1", "40", 0.0)
-  numberOfThreads("real", "50", 3.0)
+  numberOfThreads("real", "40", 3.0)
 

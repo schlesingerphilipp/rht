@@ -75,11 +75,10 @@ void printResults(BinaryArray edgeArray, Transformation t, string path, int xySt
       {   
 	int y = std::round((p - (x * cosT)) / sinT);
 	int imgY = edgeArray.height() - y;
-	if (imgY < yEnd && imgY > 0)
+	if (imgY < yEnd && imgY > 0 && imgY > yStart)
 	{
 	  rgb_image[Shape2(x,imgY)] = RGBValue<UInt8>(255,0,0);
-	  std::cout << imgY << " " << lastY;
-	  while (lastY != -1 && lastY < yEnd && ::abs(imgY - lastY) > 1)
+	  while (lastY != -1 && lastY > yStart && lastY < yEnd && ::abs(imgY - lastY) > 1)
 	  {	    
 	    lastY = ((lastY - imgY > 0) ? lastY - 1 : lastY + 1);
 	    rgb_image[Shape2(x-1,lastY)] = RGBValue<UInt8>(255,0,0);
@@ -125,7 +124,7 @@ int evaluating(char **argv)
  return 0;
 }
 int debugging(char** argv) {
-    ImageImportInfo imageInfo("../images/real.png");  
+    ImageImportInfo imageInfo("../images/realSmaller.png");  
     MultiArray<2, float > imageArray(imageInfo.shape()); 
     importImage(imageInfo, imageArray);
     MultiArray<2, float > smoothed(imageArray.shape()); 
@@ -137,7 +136,7 @@ int debugging(char** argv) {
     if (false) {
       return 0; 
     }
-    Transformation t = Rht::transform(edgeArray, 50, 50, 3, 50, 15, 30, 999);
+    Transformation t = Rht::transform(edgeArray, 50, 50, 10, 40, 15, 30, 999);
     std::cout << "Lines: ";
     std::cout <<  t.lines.size()<< endl;;
     for (LineWO l : t.lines)
