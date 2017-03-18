@@ -11,7 +11,7 @@ if(UNIX AND NOT WIN32)
          NAMES m)
      list(APPEND FFTW_LIBRARIES "${FFTW_libm_LIBRARY}")
 endif()
-
+ 
 # Find the FFTWF lib
 find_library(FFTWF_LIBRARY
      NAMES fftw-3.3f fftw3f fftwf)
