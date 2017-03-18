@@ -66,8 +66,8 @@ def evaluateParameters(lines, folder, experimentPrefix):
 def numberOfThreads(folder, points, smoothing):
   means = []
   labels = []
-  for threads in range(1,65):
-    cmd1 = ["./../build/main",  folder, "50", "50", "3", points, "15","15", str(threads), str(smoothing)]
+  for threads in range(4,5):
+    cmd1 = ["./../build/main",  folder, "50", "50", "1", points, "15","15", str(threads), str(smoothing)]
     print(cmd1)
     p1 = subprocess.Popen(cmd1, stdout=subprocess.PIPE)
     (out1, code) = p1.communicate()
@@ -89,7 +89,7 @@ def largeImageExperiment():
     xySteps = str(xyStep * xyScale)
     pointss = str(points +  3 * xyScale * xyScale)# + (10 * xyScale))
     #for short
-    cmd1 = ["./../build/main",  folder, xySteps, xySteps, "2", pointss, "15","15"]
+    cmd1 = ["./../build/main",  folder, xySteps, xySteps, "10", pointss, "10","15"]
     print(cmd1)
     p1 = subprocess.Popen(cmd1, stdout=subprocess.PIPE)
     (out1, code) = p1.communicate()
@@ -99,6 +99,6 @@ def largeImageExperiment():
     evaluateParameters(output1.split("\n"), folder, xySteps)
 
 if __name__ == "__main__":
-  numberOfThreads("experiment1", "40", 0.0)
-  numberOfThreads("real", "40", 3.0)
+  #numberOfThreads("experiment1", "40", 0.0)
+  numberOfThreads("real", "30", 3.0)
 

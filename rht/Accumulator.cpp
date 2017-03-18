@@ -19,7 +19,6 @@ vector< Circle > Accumulator::circles(vector< Circle > circles)
 }
 vector< Line > Accumulator::candidateLines(vector< Line > lines, float tolleranceTheta, float tolleranceP)
 {
-  auto start = std::chrono::high_resolution_clock::now();
   vector<Accumulate> accumulator({});
   for (Line &line : lines)
   {
@@ -52,9 +51,6 @@ vector< Line > Accumulator::candidateLines(vector< Line > lines, float tolleranc
        break;
      }
   }
-  auto end = std::chrono::high_resolution_clock::now();
-  std::chrono::duration<double, std::milli> fp_ms2 = end - start;
-  cout << fp_ms2.count() << "," << "accumulating" << endl;
   return canditates;
 }
 

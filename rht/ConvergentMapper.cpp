@@ -13,7 +13,6 @@ vector< Circle > ConvergentMapper::circles(vector< Point > points)
 }
 vector< Line > ConvergentMapper::lines(vector< Point > points)
 {
-  auto start = std::chrono::high_resolution_clock::now();
   vector<Line> lines;
   const float radToDeg  = 180 / 3.14159265;
   for (int i = 0; i < points.size() -1; i +=2) {
@@ -45,8 +44,5 @@ vector< Line > ConvergentMapper::lines(vector< Point > points)
     Line line(theta,p);
     lines.push_back(line);
   }
-  auto end = std::chrono::high_resolution_clock::now();
-  std::chrono::duration<double, std::milli> fp_ms2 = end - start;
-  std::cout << fp_ms2.count() << "," << "converging" << std::endl;
   return lines;
 }

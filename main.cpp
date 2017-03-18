@@ -110,14 +110,9 @@ int evaluating(char **argv)
  int tolleranceTheta = atoi(argv[6]);
  int tolleranceP = atoi(argv[7]);
  int numberOfThreads = atoi(argv[8]);
- //cout << "xyScale," << std::to_string(xStep) << "," << folder << endl;
  for (int i = 1; i < 21; i++)
  {
-   auto start = std::chrono::high_resolution_clock::now();
-   Transformation t = Rht::transform(edgeArray, xStep, yStep, distanceThreshold, pointsThreshold, tolleranceTheta, tolleranceP, numberOfThreads);
-   auto end = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<double, std::milli> fp_ms = end - start;
-   cout << fp_ms.count() << "," << "all" << endl;
+   Transformation t = Rht::transform(edgeArray, xStep, distanceThreshold, pointsThreshold, tolleranceTheta, tolleranceP, numberOfThreads);
    string path = "./../images/"+folder+"/out/"+std::to_string(xStep)+"run"+std::to_string(i)+".png";
    printResults(edgeArray, t, path.c_str(), xStep);
  }
@@ -132,20 +127,12 @@ int debugging(char** argv) {
     BinaryArray edgeArray(imageArray.shape());
     cannyEdgeImage(smoothed, edgeArray, 0.8, 4.0, 1);
     //BinaryArray edgeArray(getEdgeArray(smoothed));
-    exportImage(edgeArray, "../images/edge.png");
-    if (false) {
-      return 0; 
-    }
-    Transformation t = Rht::transform(edgeArray, 50, 50, 10, 40, 15, 30, 999);
+    //exportImage(edgeArray, "../images/edge.png");
+    int xyStep = 80;
+    Transformation t = Rht::transform(edgeArray, xyStep, 3, 80, 15, 30, 999);
     std::cout << "Lines: ";
     std::cout <<  t.lines.size()<< endl;;
-    for (LineWO l : t.lines)
-    {
-      float theta = std::get<0>(l);
-      float p = std::get<1>(l);
-      std::cout << theta << "," << p << endl;
-    }
-    printResults(edgeArray, t, "../images/rht.png", 50);
+    printResults(edgeArray, t, "../images/rht.png", xyStep);
     return 0;
 }
 int main(int argc, char **argv) {

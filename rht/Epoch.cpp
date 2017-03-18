@@ -35,19 +35,9 @@ vector<LineWithOrigin> Epoch::lines(ImagePart imagePart, int distanceThreshold, 
     vector< Line > candidateLines = Accumulator::candidateLines(convergedLines, tolleranceTheta, tolleranceP);
     if (candidateLines.size() > 0)
     {
-      vector<tuple<vector<Point>, Line>>matches({});
-      auto start = std::chrono::high_resolution_clock::now();
       bool trueLine = false;
       for (Line &line : candidateLines)
       {
-	  /*tuple<vector<Point>,vector<LinePart>, int> mapping = mapPointsToLine(line, imagePart);
-	  vector<LinePart>parts(get<1>(mapping));
-	  if (get<2>(mapping)>30)
-	  {
-	    imagePart.removePoints(get<0>(mapping));
-	    trueLine = true;
-	    lines.push_back(line);
-	  }*/
 	  vector<Point> pointsToRemove({});
 	  for(Point &p : imagePart.allPoints())
 	  {
@@ -62,19 +52,9 @@ vector<LineWithOrigin> Epoch::lines(ImagePart imagePart, int distanceThreshold, 
 	    LineWithOrigin lWithO = LineWithOrigin(get<0>(line),get<1>(line), get<0>(imagePart.origin), get<1>(imagePart.origin));
 	    lines.push_back(lWithO);
 	    imagePart.removePoints(pointsToRemove);
-	    //matches.push_back(tuple<vector<Point>,Line>(pointsToRemove, line));
 	    trueLine = true;
 	  }	  
       }
-      /*sort(matches.begin(),matches.end(),sortMatches);
-      for (int m = 0; m < matches.size() && m < 3; m++)
-      {
-	imagePart.removePoints(get<0>(matches[m]));
-	lines.push_back(get<1>(matches[m]));
-      }*/
-      auto end = std::chrono::high_resolution_clock::now();
-      std::chrono::duration<double, std::milli> fp_ms2 = end - start;
-      //cout << fp_ms2.count() << "," << "trueline" << endl;
       if (!trueLine)
       {
 	break;
@@ -93,68 +73,7 @@ vector<Circle> Epoch::circles(ImagePart imagePart)
   vector<Circle> circles;
   return circles;
 }
-tuple< vector< Point >,vector<LinePart>, int > Epoch::mapPointsToLine(Line line, ImagePart &imagePart)
-{
-  vector<LinePart> parts({});
-  vector<Point> pointsToRemove({});
-  vector<Point> potentialRemove({});
-  Start start;
-  bool hasStart = false;
-  End end;
-  int tollerance = 3;
-  int maximum = 10;
-  int len = 0;
-  int allLength = 0;
-  imagePart.initIterator(line);
-  while (imagePart.hasNext()) 
-  {
-    Point next = imagePart.next();
-    int x = get<0>(next);
-    int y = get<1>(next);
-    len +=1;
-    if (imagePart.isNotZeroAt(x,y))
-    {
-      tollerance = tollerance == maximum ? maximum : tollerance + 1; 
-      if (!hasStart)
-      {
-	len = 0;
-	tollerance = 3;
-	start = Start(x,y);
-	hasStart = true;
-      }
-      end = End(x,y);
-      potentialRemove.push_back(Point(x,y));
-      for (int xt = -2; xt < 3; xt++)
-      {
-	for(int yt = -2; yt < 3; yt++)
-	{
-	  if(imagePart.isNotZeroAt(x+xt,y+yt))
-	  {
-	    potentialRemove.push_back(Point(x+xt,y+yt));
-	    tollerance = tollerance == maximum ? maximum : tollerance + 1;
-	  }
-	}
-      }
-    }
-    else if (tollerance == 0)
-    {
-      if (hasStart)
-      {
-	LinePart part(start,end,line, len);
-	parts.push_back(part);
-	pointsToRemove.insert(pointsToRemove.end(), potentialRemove.begin(),potentialRemove.end());
-	potentialRemove.clear();
-	hasStart = false;
-	allLength =  + len;
-      }
-    }
-    else
-    {
-      tollerance -=1;
-    }
-  }
-  return tuple< vector< Point >,vector<LinePart>, int > (pointsToRemove, parts, allLength);
-}
+
 int Epoch::linePointDistance(Line line, Point point)
 {
   /*

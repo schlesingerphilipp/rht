@@ -14,7 +14,7 @@ typedef tuple<int,int,float> Circle;
 typedef tuple<float,float, int, int> LineWO;
 
 using namespace std;
-Transformation Rht::transform(BinaryArray img, int xStep, int yStep, int distanceThreshold, int pointsThreshold , float tolleranceTheta, float tolleranceP, int numberOfThreads)
+Transformation Rht::transform(BinaryArray img, int size, int distanceThreshold, int pointsThreshold , float tolleranceTheta, float tolleranceP, int numberOfThreads)
 {
   //create the convergers, and start them
   vector<future<vector<LineWO>>> futureLines;
@@ -24,21 +24,19 @@ Transformation Rht::transform(BinaryArray img, int xStep, int yStep, int distanc
   int origX = 0;
   while(x < img.width())
   {
-    x = x + xStep > img.width() ? img.width() : x + xStep;
+    x = x + size > img.width() ? img.width() : x + size;
     int y =0;
     int origY = 0;  
     while (y < img.height())
     {
-      y = y + yStep > img.height() ? img.height() : y + yStep;
+      y = y + size > img.height() ? img.height() : y + size;
       vigra::Shape2 topLeft(origX,origY);
       vigra::Shape2 bottomRight(x,y);
-      int origP = img.height() - (origY + yStep); //Distance to origin of polar system to vigra origin
+      int origP = img.height() - (origY + size); //Distance to origin of polar system to vigra origin
       tuple<int,int> orig(origX, origY);
       BinaryArray subImg(img.subarray(topLeft, bottomRight));
       ImagePart imagePart(orig,subImg, origP);
       origY = y;
-      //auto fLines = async(launch::async,*Epoch::lines, imagePart, distanceThreshold, pointsThreshold, tolleranceTheta, tolleranceP);
-      //auto fCircles = async(launch::async,*Epoch::circles, imagePart);
       auto fLines = pool.enqueue(*Epoch::lines, imagePart, distanceThreshold, pointsThreshold, tolleranceTheta, tolleranceP);
       auto fCircles = pool.enqueue(Epoch::circles, imagePart);
 
@@ -48,9 +46,9 @@ Transformation Rht::transform(BinaryArray img, int xStep, int yStep, int distanc
     }
     origX = x;
   }
-  return summitUp(futureLines,futureCircles, tolleranceTheta, tolleranceP);
+  return collectResults(futureLines,futureCircles, tolleranceTheta, tolleranceP);
 }
-Transformation Rht::summitUp(vector<future<vector<LineWO>>> &futureLines,  vector<future<vector<Circle>>> &futureCircles, float tolleranceTheta, float tolleranceP )
+Transformation Rht::collectResults(vector<future<vector<LineWO>>> &futureLines,  vector<future<vector<Circle>>> &futureCircles, float tolleranceTheta, float tolleranceP )
 {
   vector<LineWO> lines;
   for (auto &line : futureLines){
@@ -62,7 +60,6 @@ Transformation Rht::summitUp(vector<future<vector<LineWO>>> &futureLines,  vecto
     vector<Circle> circlesFromSeperation(circle.get());
     circles.insert(circles.end(), circlesFromSeperation.begin(), circlesFromSeperation.end());
   }
-  //vector< LineWO > accumulatedLines = Accumulator::candidateLines(lines, tolleranceTheta, tolleranceP);
   return Transformation(lines,circles);
 }
 
