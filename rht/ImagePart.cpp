@@ -20,7 +20,10 @@ typedef tuple<float,float> Line;
   return rand()%i;
   
 }
-
+/**
+  * Returns Points relative to Polar coordiante system origin of the whole image (not only this part)
+  * These are all points of this part, but they are shuffled
+  */
  vector<Point> ImagePart::selectRandomPoints()
  {
    vector<tuple<int,int>> points = allPoints();
@@ -51,46 +54,11 @@ vector< Point > ImagePart::allPoints()
    }
    return points;
 }
-Point ImagePart::next()
-{
-  if (iterTheta == 0)
-  {
-    iterX = std::round(iterP);
-    iterY += 1;
-  }
-  else if (iterTheta == 1.57) 
-  {
-    iterY =  std::round(iterP);
-    iterX += 1;
-  }
-  else
-  {
-    float cosT = cos(iterTheta);
-    float sinT = sin(iterTheta);
-    iterX += 1;
-    iterY = std::round((iterP - (iterX * cosT)) / sinT);
-  }
-  int imgX = iterX - get<0>(origin);
-  int imgY = image.height() - (iterY - polarYOrigin);
-  iterHasNext = imgX < image.width() || imgY < image.height();  
-  return Point(iterX, iterY);
-}
 
-bool ImagePart::hasNext()
-{
-  return iterHasNext;
-}
-void ImagePart::initIterator(Line &line)
-{
-  iterTheta = get<0>(line);
-  iterP = get<1>(line);
-  iterX = get<0>(origin);
-  iterY = polarYOrigin;
-  iterHasNext = true;
-  iteratorReady = true;
-}
+
 /**
- * Takes Points relative to polar origin of whole image.
+ * We opate an an binary edge represenatation. Here we check if this point is a point of interest, 
+ * which are only points belonging to an edge. We are not interested in zero (empty space) points
  */
 bool ImagePart::isNotZeroAt(int x, int y)
 {
@@ -105,7 +73,7 @@ bool ImagePart::isNotZeroAt(int x, int y)
 
 
 /**
- * Takes Points relative to polar origin of whole image.
+ * Permanently remove these points , so they can not be evidence for other lines.
  */
 void ImagePart::removePoints(vector< Point > &points)
 {

@@ -11,6 +11,9 @@ vector< Circle > ConvergentMapper::circles(vector< Point > points)
 {
 
 }
+/**
+ * Based on two points a line is calculated, which passes these two points.
+ */
 vector< Line > ConvergentMapper::lines(vector< Point > points)
 {
   vector<Line> lines;

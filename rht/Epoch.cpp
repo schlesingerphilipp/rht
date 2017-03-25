@@ -21,6 +21,11 @@ bool sortMatches(tuple<vector<Point>,Line> one,tuple<vector<Point>,Line> two)
   return get<0>(one).size() > get<0>(two).size();
 }
 
+/**
+ * The RHT is an iterative procedure, where one Epoch is one iteration. In one Epoch candidate lines are selected,
+ * and it is tested if they are true lines. When true lines are detected a further Epoch is executed, 
+ * when no true line is detected the RHT is complete. 
+ */
 vector<LineWithOrigin> Epoch::lines(ImagePart imagePart, int distanceThreshold, int pointsThreshold , float tolleranceTheta, float tolleranceP)
 {
   vector<LineWithOrigin> lines;
@@ -38,6 +43,7 @@ vector<LineWithOrigin> Epoch::lines(ImagePart imagePart, int distanceThreshold, 
       bool trueLine = false;
       for (Line &line : candidateLines)
       {
+	  //For all remaining points, test if they support this line
 	  vector<Point> pointsToRemove({});
 	  for(Point &p : imagePart.allPoints())
 	  {
@@ -46,7 +52,7 @@ vector<LineWithOrigin> Epoch::lines(ImagePart imagePart, int distanceThreshold, 
 	      pointsToRemove.push_back(p);
 	    }
 	  }
-	  
+	  //Is there enough evidence? If so, remove all supporting points
 	  if (pointsToRemove.size() > pointsThreshold)
 	  {
 	    LineWithOrigin lWithO = LineWithOrigin(get<0>(line),get<1>(line), get<0>(imagePart.origin), get<1>(imagePart.origin));

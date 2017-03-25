@@ -14,6 +14,11 @@ typedef tuple<int,int,float> Circle;
 typedef tuple<float,float, int, int> LineWO;
 
 using namespace std;
+/**
+ * The main call of the RHT. This method spawns threads, which will perform a RHT on parts of the image.
+ * The parts are created as squares of size * size. The main thread will collect all lines from the parts and 
+ * return them in a Transformation object.
+ */
 Transformation Rht::transform(BinaryArray img, int size, int distanceThreshold, int pointsThreshold , float tolleranceTheta, float tolleranceP, int numberOfThreads)
 {
   //create the convergers, and start them

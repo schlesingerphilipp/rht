@@ -17,6 +17,12 @@ vector< Circle > Accumulator::circles(vector< Circle > circles)
 {
 
 }
+/**
+ * This method returns the candidate lines
+ * This method accumulates similar lines in an accumulate. The accumulate is the average of all lines of this accumulate.
+ * The accumulate has as many votes as it has lines. When an accumulate has more than 2 or three votes, it will be 
+ * a candidate line.
+ */
 vector< Line > Accumulator::candidateLines(vector< Line > lines, float tolleranceTheta, float tolleranceP)
 {
   vector<Accumulate> accumulator({});
@@ -37,9 +43,10 @@ vector< Line > Accumulator::candidateLines(vector< Line > lines, float tolleranc
       accumulator.push_back(line);
     }
   }
-  //Only return candidate Lines (more than 2 or 3 occurances)
+  //In the reference paper: Only return candidate Lines (more than 2 or 3 occurances)
+  //Here there are less points, due to splitting the image, and like that less lines in every part, 
+  //and it is neccessary to check each converged line
   vector< Line > canditates = {};
-  sort(accumulator.begin(),accumulator.end(),sortCandidates);
   for (Accumulate &accumulate : accumulator)
   {
      if (accumulate.votes > 0)

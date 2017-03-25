@@ -30,8 +30,5 @@ class ImagePart {
     vector<Point> allPoints();
     void removePoints(vector<Point> &points);
     bool isNotZeroAt(int x, int y);
-    void initIterator(Line &line);
-    bool hasNext();
-    Point next();
   };
 #endif

@@ -3,6 +3,9 @@
 using namespace std;
 typedef tuple<int,int,float> Circle;
 typedef tuple<float,float> Line;
+/**
+ * The candidate line is the average of all similar lines.
+ */
 void Accumulate::voteFor(Line voter)
 {
   float theta = (get<0>(line) * votes + get<0>(voter)) / (votes +1);
@@ -10,6 +13,9 @@ void Accumulate::voteFor(Line voter)
   line = Line(theta,p);
   votes +=1;
 }
+/**
+ * the parameter of theta tollerance is in degree
+ */
 bool Accumulate::isSimilarTo(Line l, float tolleranceTheta,  float tolleranceP)
 {
   const float radToDeg  = 180 / 3.14159265;

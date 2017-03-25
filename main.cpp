@@ -90,6 +90,9 @@ void printResults(BinaryArray edgeArray, Transformation t, string path, int xySt
   }
   exportImage(rgb_image, path.c_str());
 }
+/**
+ * This is a method to perform some experiments, use the debugging method.
+ */
 int evaluating(char **argv)
 {
  string folder = argv[1]; 
@@ -119,17 +122,30 @@ int evaluating(char **argv)
  return 0;
 }
 int debugging(char** argv) {
+    //Load the image
     ImageImportInfo imageInfo("../images/realSmaller.png");  
     MultiArray<2, float > imageArray(imageInfo.shape()); 
     importImage(imageInfo, imageArray);
     MultiArray<2, float > smoothed(imageArray.shape()); 
+    
+    //It can be neccessary to remove noise a.s.o
     gaussianSmoothMultiArray(imageArray, smoothed, 3.0);
-    BinaryArray edgeArray(imageArray.shape());
+    //Get an edge represenation of the image
+    BinaryArray edgeArray(smoothed.shape());
     cannyEdgeImage(smoothed, edgeArray, 0.8, 4.0, 1);
-    //BinaryArray edgeArray(getEdgeArray(smoothed));
-    //exportImage(edgeArray, "../images/edge.png");
-    int xyStep = 80;
-    Transformation t = Rht::transform(edgeArray, xyStep, 3, 80, 15, 30, 999);
+    
+    //Parameters of the RHT
+    int xyStep = 60; //how big are the splits of the image?
+    int bandwidth = 3; //How far away can points be from a line to support it?
+    int requiredEvidence = 50;//How many points need to be evidence for a line?
+    int tolleranceTheta = 15;//Averaging two lines,
+    int tolleranceP = 30;//with this two parameters
+    int maximumThreads = 999;//If you want to use your computer while processing many big images, limit this 
+    
+    //The paralellized  RHT
+    Transformation t = Rht::transform(edgeArray, xyStep, bandwidth, requiredEvidence, tolleranceTheta, tolleranceP, maximumThreads);
+    
+    //Print results
     std::cout << "Lines: ";
     std::cout <<  t.lines.size()<< endl;;
     printResults(edgeArray, t, "../images/rht.png", xyStep);
